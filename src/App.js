@@ -14,7 +14,9 @@ function App() {
   const colors = ['#feff9c', '#fff740', '#7afcff', '#ff65a3', '#ff7eb9', '#e4eeff', '#d2ccf2', '#c8a8d5']
 
   const [notes, setNotes] = useState([]);
+  const [filteredNotes, setFilteredNotes] = useState([]);
   const [listView, setListView] = useState(true);
+  const [search, setSearch] = useState('');
 
   const addNote = (val) => {
     let newNotes = [...notes];
@@ -45,6 +47,14 @@ function App() {
     setNotes(newNotes);
   }
 
+  const searchNote = () => {
+    let newNotes = [...notes]
+    let filterData = newNotes.filter(note =>
+      note.text.includes(search)
+    )
+    setFilteredNotes(filterData)
+  }
+
   return (
     <div className="flex p-5 flex-row">
       <div className={`noteslist ${listView ? 'scale-100 w-[280px] h-full mr-2 bg-[#f1f1f1] border' : 'scale-0 w-0 h-0'} flex-shrink-0  rounded overflow-hidden transition-all linear duration-500`}>
@@ -58,12 +68,23 @@ function App() {
         </div>
         <h1 className='text-2xl p-2'>Sticky Notes</h1>
         <div className="flex m-2 bg-slate-300 justify-center items-center">
-          <input className='bg-transparent w-full p-1 focus-visible:outline-none' type="text" placeholder='Search...' />
-          <Button click={() => addNote()} icon={<IoSearch size={20} />} />
+          <input className='bg-transparent w-full p-1 focus-visible:outline-none' type="text" placeholder='Search...' value={search} onChange={(e) => setSearch(e.target.value)} />
+          <Button click={() => searchNote()} icon={<IoSearch size={20} />} />
         </div>
-
-        {notes.length > 0 && notes.map((x, i) => {
+        {search == '' && notes.length > 0 && notes.map((x, i) => {
           return <div className="m-2 relative cursor-pointer" onClick={() => updateView(i)}>
+            <div className={`noteview ${x.view ? 'active' : ''} flex flex-col w-full p-2`} style={{ backgroundColor: `${x.bgcolor}` }}>
+              <div className="flex justify-end">
+                <span className="text-xs">{x.createdOn}</span>
+              </div>
+              <textarea value={x.text} readOnly className='w-full cursor-pointer bg-transparent resize-none focus-visible:outline-none' placeholder='Take a Note....' cols={30} rows={2}></textarea>
+            </div>
+
+          </div>
+        })}
+
+        {search != "" && filteredNotes.length > 0 && filteredNotes.map((x, i) => {
+          return <div key={i} className="m-2 relative cursor-pointer" onClick={() => updateView(i)}>
             <div className={`noteview ${x.view ? 'active' : ''} flex flex-col w-full p-2`} style={{ backgroundColor: `${x.bgcolor}` }}>
               <div className="flex justify-end">
                 <span className="text-xs">{x.createdOn}</span>
@@ -88,14 +109,14 @@ function App() {
               </div>
               {x.options &&
                 <div className='toolarea flex flex-col bg-gray-100'>                  <div className='colorarea w-full flex'>
-                    {colors.map((color, cindex) => {
-                      return <span onClick={() => updateColor(color, i)} className='flex flex-row  w-full h-8 justify-center items-center cursor-pointer' style={{ backgroundColor: `${color}` }}>
-                        {x.bgcolor == color ? <IoCheckmark size={20} /> : <></>}
-                      </span>
-                    })}
+                  {colors.map((color, cindex) => {
+                    return <span onClick={() => updateColor(color, i)} className='flex flex-row  w-full h-8 justify-center items-center cursor-pointer' style={{ backgroundColor: `${color}` }}>
+                      {x.bgcolor == color ? <IoCheckmark size={20} /> : <></>}
+                    </span>
+                  })}
 
-                  </div>
-                  <button onClick={()=>setListView(!listView)} className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
+                </div>
+                  <button onClick={() => setListView(!listView)} className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
                     <IoList className='mr-2' /> Notes List
                   </button>
                   <button className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
@@ -108,8 +129,6 @@ function App() {
           }
 
         })}
-
-        <p>{JSON.stringify(notes)}</p>
       </div>
     </div>
   );
