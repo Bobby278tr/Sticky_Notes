@@ -1,16 +1,41 @@
 import './App.css';
-import { IoAdd, IoClose, IoSearch, IoSettingsOutline } from 'react-icons/io5';
+import { IoAdd, IoCheckmark, IoClose, IoEllipsisHorizontal, IoList, IoSearch, IoSettingsOutline, IoTrash } from 'react-icons/io5';
 import Button from './Components/Button';
+import { useState } from 'react';
 
 function App() {
-  function addNote(){
-    console.log("Add Note");
+  const blankNotes ={
+    text: '',
+    createdOn: null,
+    bgcolor: '#feff9c',
+    view: true
   }
+  const colors =['#feff9c', '#fff740', '#7afcff', '#ff65a3', '#ff7eb9', '#e4eeff', '#d2ccf2', '#c8a8d5']
+  const [notes, setNotes] = useState([]);
+  
+  const addNote=(val)=>{
+    let newNotes = [...notes];
+    val.createdOn = (new Date()).toDateString()
+    newNotes.push(val);
+    setNotes(newNotes);
+  }
+  const updateNote=(val, i)=>{
+    let newNotes = [...notes];
+    newNotes[i].text = val;
+    setNotes(newNotes);
+  }
+
+  const updateColor=(val, i)=>{
+    let newNotes = [...notes];
+    newNotes[i].bgcolor = val;
+    setNotes(newNotes);
+  }
+
   return (
     <div className="flex p-5 flex-row">
       <div className="noteslist border w-[280px] flex-shrink-0 h-full mr-2 bg-[#f1f1f1] rounded overflow-hidden">
         <div className="toolbar flex justify-between bg-black bg-opacity-10 items-center">
-          <Button click={()=> addNote()} icon={<IoAdd size={20}/>}/>
+          <Button click={()=> addNote(blankNotes)} icon={<IoAdd size={20}/>}/>
           <div className="flex">
           <Button click={()=> addNote()} icon={<IoSettingsOutline size={18}/>}/>
           <Button click={()=> addNote()} icon={<IoClose size={20}/>}/>
@@ -23,26 +48,46 @@ function App() {
           <Button click={()=> addNote()} icon={<IoSearch size={20}/>}/>
         </div>
         <div className="m-2">
-          <div className="flex flex-col w-full p-2 bg-gray-300">
+          {notes.length > 0 && notes.map((x,i)=>{
+            return <div className="flex flex-col w-full p-2 " style={{backgroundColor: `${x.bgcolor}`}}>
             <div className="flex justify-end">
-              <span className="text-xs">Sat, 20 July 2024</span>
+              <span className="text-xs">{x.createdOn}</span>
             </div>
-            <textarea readOnly className='w-full cursor-pointer bg-transparent resize-none focus-visible:outline-none' placeholder='Take a Note....' cols={30} rows={2}></textarea>
+            <textarea value={x.text} readOnly className='w-full cursor-pointer bg-transparent resize-none focus-visible:outline-none' placeholder='Take a Note....' cols={30} rows={2}></textarea>
           </div>
-        </div>
-      </div>
-      <div className="notesview border w-full">
-        <h1>Notes View</h1>
-        <div className="flex flex-col bg-red-200">
-        <div className="toolbar flex justify-between bg-black bg-opacity-10 items-center">
-          <Button click={()=> addNote()} icon={<IoAdd size={20}/>}/>
-          <div className="flex">
-          <Button click={()=> addNote()} icon={<IoSettingsOutline size={18}/>}/>
-          <Button click={()=> addNote()} icon={<IoClose size={20}/>}/>
-          </div>
+          }) }
           
         </div>
-        </div>
+      </div>
+      <div className="notesview w-full">
+        {notes.length && notes.map((x, i)=>{
+          return <div className="flex flex-col rounded overflow-hidden w-[400px] pb-1 mb-2" style={{backgroundColor: `${x.bgcolor}`}}>
+          <div className="toolbar flex justify-between bg-black bg-opacity-10 items-center">
+            <Button click={()=> addNote()} icon={<IoAdd size={20}/>}/>
+            <div className="flex">
+            <Button click={()=> addNote()} icon={<IoEllipsisHorizontal size={18}/>}/>
+            <Button click={()=> addNote()} icon={<IoClose size={20}/>}/>
+            </div>
+          </div>
+          <div className='colorarea w-full flex'>
+            {colors.map((color, cindex)=>{
+              return <span onClick={()=> updateColor(color, i)} className='flex flex-row  w-full h-8 justify-center items-center cursor-pointer' style={{backgroundColor:`${color}`}}>
+                {x.bgcolor == color ? <IoCheckmark size={20}/> : <></>}
+              </span>
+            })}
+            
+          </div>
+          <button className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
+            <IoList className='mr-2'/> Notes List
+          </button>
+          <button className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
+            <IoTrash className='mr-2'/> Delete Note
+          </button>
+          <textarea value={x.text} onChange={(e) => updateNote(e.target.value, i)} className='w-full bg-transparent focus-visible:outline-none p-2' placeholder='Take a note...' name="" id="" cols={30} rows={4}></textarea>
+          </div>
+        }) }
+        
+        <p>{JSON.stringify(notes)}</p>
       </div>
     </div>
   );
