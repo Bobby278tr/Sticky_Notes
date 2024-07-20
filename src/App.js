@@ -12,7 +12,9 @@ function App() {
     options: false
   }
   const colors = ['#feff9c', '#fff740', '#7afcff', '#ff65a3', '#ff7eb9', '#e4eeff', '#d2ccf2', '#c8a8d5']
+
   const [notes, setNotes] = useState([]);
+  const [listView, setListView] = useState(true);
 
   const addNote = (val) => {
     let newNotes = [...notes];
@@ -45,12 +47,12 @@ function App() {
 
   return (
     <div className="flex p-5 flex-row">
-      <div className="noteslist border w-[280px] flex-shrink-0 h-full mr-2 bg-[#f1f1f1] rounded overflow-hidden">
+      <div className={`noteslist ${listView ? 'scale-100 w-[280px] h-full mr-2 bg-[#f1f1f1] border' : 'scale-0 w-0 h-0'} flex-shrink-0  rounded overflow-hidden transition-all linear duration-500`}>
         <div className="toolbar flex justify-between bg-black bg-opacity-10 items-center">
           <Button click={() => addNote(blankNotes)} icon={<IoAdd size={20} />} />
           <div className="flex">
             <Button click={() => addNote()} icon={<IoSettingsOutline size={18} />} />
-            <Button click={() => addNote()} icon={<IoClose size={20} />} />
+            <Button click={() => setListView(!listView)} icon={<IoClose size={20} />} />
           </div>
 
         </div>
@@ -78,7 +80,7 @@ function App() {
           if (x.view) {
             return <div className="flex flex-col rounded overflow-hidden w-[400px] pb-1 mb-2" style={{ backgroundColor: `${x.bgcolor}` }}>
               <div className="toolbar flex justify-between bg-black bg-opacity-10 items-center">
-                <Button click={() => addNote()} icon={<IoAdd size={20} />} />
+                <Button click={() => addNote(blankNotes)} icon={<IoAdd size={20} />} />
                 <div className="flex">
                   <Button click={() => updateOpt(i)} icon={<IoEllipsisHorizontal size={18} />} />
                   <Button click={() => updateView(i)} icon={<IoClose size={20} />} />
@@ -93,7 +95,7 @@ function App() {
                     })}
 
                   </div>
-                  <button className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
+                  <button onClick={()=>setListView(!listView)} className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
                     <IoList className='mr-2' /> Notes List
                   </button>
                   <button className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
