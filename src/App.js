@@ -55,6 +55,12 @@ function App() {
     setFilteredNotes(filterData)
   }
 
+  const deleteNote = (index) => {
+    let newNotes = [...notes];
+    newNotes.splice(index, 1);
+    setNotes(newNotes);
+  }
+
   return (
     <div className="flex p-5 flex-row">
       <div className={`noteslist ${listView ? 'scale-100 w-[280px] h-full mr-2 bg-[#f1f1f1] border' : 'scale-0 w-0 h-0'} flex-shrink-0  rounded overflow-hidden transition-all linear duration-500`}>
@@ -119,7 +125,7 @@ function App() {
                   <button onClick={() => setListView(!listView)} className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
                     <IoList className='mr-2' /> Notes List
                   </button>
-                  <button className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
+                  <button onClick={() => deleteNote(i)} className='flex justify-start items-center hover:bg-slate-200 py-1 px-2'>
                     <IoTrash className='mr-2' /> Delete Note
                   </button>
                 </div>}
