@@ -1,7 +1,7 @@
 import './App.css';
 import { IoAdd, IoCheckmark, IoClose, IoEllipsisHorizontal, IoList, IoSearch, IoSettingsOutline, IoTrash } from 'react-icons/io5';
 import Button from './Components/Button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function App() {
   const blankNotes = {
@@ -13,10 +13,17 @@ function App() {
   }
   const colors = ['#feff9c', '#fff740', '#7afcff', '#ff65a3', '#ff7eb9', '#e4eeff', '#d2ccf2', '#c8a8d5']
 
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(() => {
+    const savedNotes = localStorage.getItem('notes');
+    return savedNotes ? JSON.parse(savedNotes) : [];
+  });
   const [filteredNotes, setFilteredNotes] = useState([]);
   const [listView, setListView] = useState(true);
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem('notes', JSON.stringify(notes));
+  }, [notes]);
 
   const addNote = (val) => {
     let newNotes = [...notes];
