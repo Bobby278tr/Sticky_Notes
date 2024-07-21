@@ -68,13 +68,17 @@ function App() {
     setNotes(newNotes);
   }
 
+  const doNothing=()=>{
+
+  }
+
   return (
     <div className="flex p-5 flex-row">
       <div className={`noteslist ${listView ? 'scale-100 w-[280px] h-full mr-2 bg-[#f1f1f1] border' : 'scale-0 w-0 h-0'} flex-shrink-0  rounded overflow-hidden transition-all linear duration-500`}>
         <div className="toolbar flex justify-between bg-black bg-opacity-10 items-center">
           <Button click={() => addNote(blankNotes)} icon={<IoAdd size={20} />} />
           <div className="flex">
-            <Button click={() => addNote()} icon={<IoSettingsOutline size={18} />} />
+            <Button click={() => doNothing() } icon={<IoSettingsOutline size={18} />} />
             <Button click={() => setListView(!listView)} icon={<IoClose size={20} />} />
           </div>
 
